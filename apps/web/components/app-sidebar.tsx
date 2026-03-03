@@ -13,8 +13,6 @@ import { BarChart, Briefcase, Home, Shield } from "lucide-react";
 import Link from "next/link";
 
 export default function AppSidebar() {
-	const { user } = useAuthStore();
-
 	return (
 		<SidebarContent className="w-full p-2">
 			<SidebarGroup>
