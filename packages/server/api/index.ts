@@ -52,6 +52,7 @@ app.use(
 			"http://localhost:3001",
 			"http://localhost:5173",
 			"http://192.168.1.18:3000",
+			"https://maestro-done-baclend-web-6eqb.vercel.app",
 			"https://maestro-frontned-web.vercel.app",
 			"https://maestro-done-baclend-web.vercel.app",
 		],
