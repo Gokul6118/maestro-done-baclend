@@ -68,41 +68,38 @@ app.options("*", (c) => {
 });
 
 /* ================= AUTH MIDDLEWARE ================= */
-
 app.use("*", async (c, next) => {
 	const path = c.req.path;
+
 	console.log("🔐 Auth Middleware Triggered for:", path);
 
-	if (path.startsWith("/auth") || path === "/openapi" || path === "/docs") {
+	// ✅ SKIP AUTH FOR AUTH ROUTES
+	if (
+		path.startsWith("/api/auth") ||
+		path === "/api/openapi" ||
+		path === "/api/docs"
+	) {
 		console.log("⏭ Skipping Auth for public route");
 		return next();
 	}
 
-	try {
-		const headers = new Headers();
-		c.req.raw.headers.forEach((value, key) => {
-			headers.set(key, value);
-		});
+	const headers = new Headers();
+	c.req.raw.headers.forEach((value, key) => {
+		headers.set(key, value);
+	});
 
-		const session = await auth.api.getSession({ headers });
+	const session = await auth.api.getSession({ headers });
 
-		console.log("🧾 Session:", session);
+	console.log("🧾 Session:", session);
 
-		if (!session?.user) {
-			console.log("❌ No session found. Unauthorized.");
-			return c.json({ message: "Login required" }, 401);
-		}
-
-		console.log("✅ Authenticated User:", session.user.id);
-		c.set("userId", session.user.id);
-
-		await next();
-	} catch (error) {
-		console.error("🚨 Auth Error:", error);
-		return c.json({ message: "Auth error" }, 500);
+	if (!session?.user) {
+		console.log("❌ No session found. Unauthorized.");
+		return c.json({ message: "Login required" }, 401);
 	}
-});
 
+	c.set("userId", session.user.id);
+	await next();
+});
 /* ================= AUTH ROUTES ================= */
 
 app.all("/auth/*", async (c) => {
